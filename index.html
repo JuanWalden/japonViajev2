@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador de Viaje a Japón 2025</title>
+    
+    <!-- PWA Manifest and Theme Color -->
+    <meta name="theme-color" content="#ef4444"/>
+    <link rel="manifest" id="manifest">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .dark body {
+            background-color: #1a202c;
+        }
+        .nav-item.active {
+            background-color: #fee2e2;
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .dark .nav-item.active {
+            background-color: #4a0404;
+            color: #fca5a5;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .progress-gradient-tokyo { background-image: linear-gradient(to right, #ec4899, #f87171); }
+        .progress-gradient-kyoto { background-image: linear-gradient(to right, #8b5cf6, #a78bfa); }
+        .progress-gradient-takayama { background-image: linear-gradient(to right, #22c55e, #4ade80); }
+        .progress-gradient-osaka { background-image: linear-gradient(to right, #f97316, #fb923c); }
+    </style>
+</head>
+<body class="text-gray-800 dark:text-gray-200">
+
+    <div class="container mx-auto p-4 max-w-7xl">
+        <!-- Header -->
+        <header class="flex flex-wrap justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Japón 2025</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">4 personas • 16 sep - 1 oct</p>
+            </div>
+            <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+                <span class="flex items-center text-sm text-green-600 dark:text-green-400">
+                    <i data-lucide="circle" class="w-3 h-3 fill-current mr-2"></i> En línea
+                </span>
+                <span id="countdown" class="text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-medium px-3 py-1 rounded-full"></span>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:text-gray-300 hidden dark:inline"></i>
+                    <i data-lucide="sun" class="w-5 h-5 text-gray-600 dark:text-gray-300 inline dark:hidden"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-2 flex flex-wrap justify-center sm:justify-start space-x-1 mb-6">
+            <button data-target="itinerario" class="nav-item flex items-center px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i data-lucide="calendar-days" class="w-4 h-4 mr-2"></i> Itinerario
+            </button>
+            <button data-target="ciudades" class="nav-item flex items-center px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i> Ciudades y Hoteles
+            </button>
+            <button data-target="compras" class="nav-item flex items-center px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i data-lucide="shopping-cart" class="w-4 h-4 mr-2"></i> Compras
+            </button>
+            <button data-target="presupuesto" class="nav-item flex items-center px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i data-lucide="piggy-bank" class="w-4 h-4 mr-2"></i> Presupuesto
+            </button>
+            <button data-target="utilidades" class="nav-item flex items-center px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i data-lucide="wrench" class="w-4 h-4 mr-2"></i> Utilidades
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Itinerario Section -->
+            <section id="itinerario" class="content-section space-y-6">
+                <!-- Trip Progress -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Progreso del Viaje</h2>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
+                            <span>España: <span id="time-es"></span></span>
+                            <span>Japón: <span id="time-jp"></span></span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- City Cards -->
+                            <div class="p-4 rounded-lg text-white progress-gradient-tokyo">
+                                <p class="font-bold">Tokyo</p>
+                                <p class="text-sm">17-20 & 29 sep - 1 oct</p>
+                                <div class="text-xs mt-2 p-2 bg-black bg-opacity-20 rounded">
+                                    <p class="font-semibold">Ropa recomendada:</p>
+                                    <p>Chaqueta de invierno, bufanda</p>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg text-white progress-gradient-kyoto">
+                                <p class="font-bold">Kyoto</p>
+                                <p class="text-sm">22-24 sep</p>
+                                <div class="text-xs mt-2 p-2 bg-black bg-opacity-20 rounded">
+                                    <p class="font-semibold">Ropa recomendada:</p>
+                                    <p>Chaqueta de invierno, bufanda</p>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg text-white progress-gradient-takayama">
+                                <p class="font-bold">Takayama</p>
+                                <p class="text-sm">24-26 sep</p>
+                                <div class="text-xs mt-2 p-2 bg-black bg-opacity-20 rounded">
+                                    <p class="font-semibold">Ropa recomendada:</p>
+                                    <p>Abrigo grueso, guantes, gorro</p>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg text-white progress-gradient-osaka">
+                                <p class="font-bold">Osaka</p>
+                                <p class="text-sm">27-29 sep</p>
+                                <div class="text-xs mt-2 p-2 bg-black bg-opacity-20 rounded">
+                                    <p class="font-semibold">Ropa recomendada:</p>
+                                    <p>Chaqueta de invierno, bufanda</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Day by Day Plan -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Plan Día a Día</h2>
+                    <div id="itinerary-container" class="space-y-4">
+                        <!-- Itinerary items will be injected here by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ciudades Section -->
+            <section id="ciudades" class="content-section space-y-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Ciudades y Hoteles</h2>
+                <div id="cities-container" class="space-y-6">
+                    <!-- City details will be injected here by JS -->
+                </div>
+            </section>
+
+            <!-- Compras Section -->
+            <section id="compras" class="content-section">
+                 <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Lista de Compras</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                            <h3 class="font-semibold mb-4 text-gray-900 dark:text-white">Añadir nuevo artículo</h3>
+                            <form id="shopping-form" class="grid grid-cols-1 sm:grid-cols-6 gap-4">
+                                <input type="text" id="item-name" placeholder="Nombre del artículo" class="sm:col-span-2 p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                <select id="item-category" class="sm:col-span-2 p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                    <option>Souvenirs</option>
+                                    <option>Electrónica</option>
+                                    <option>Ropa</option>
+                                    <option>Comida y Snacks</option>
+                                    <option>Otros</option>
+                                </select>
+                                <input type="number" id="item-price" placeholder="Precio estimado (¥)" class="sm:col-span-1 p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                <button type="submit" class="sm:col-span-1 bg-red-500 text-white p-2 rounded hover:bg-red-600">Añadir</button>
+                            </form>
+                        </div>
+                        <div id="shopping-list-container" class="mt-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm min-h-[200px]">
+                            <!-- Shopping list items will be injected here -->
+                             <div class="text-center text-gray-500 dark:text-gray-400 pt-8">
+                                <i data-lucide="shopping-basket" class="w-12 h-12 mx-auto mb-2"></i>
+                                <p>No hay artículos en tu lista de compras</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                            <h3 class="font-semibold mb-4 text-gray-900 dark:text-white">Resumen de Compras</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span>Presupuesto:</span>
+                                    <div class="text-right">
+                                        <span class="font-semibold">¥60,000</span>
+                                        <span id="shopping-budget-eur" class="block text-xs text-gray-500 dark:text-gray-400"></span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Gastado:</span>
+                                    <div class="text-right">
+                                        <span id="shopping-spent" class="font-semibold">¥0</span>
+                                        <span id="shopping-spent-eur" class="block text-xs text-gray-500 dark:text-gray-400"></span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-red-600 dark:text-red-400">
+                                    <span>Restante:</span>
+                                    <div class="text-right">
+                                        <span id="shopping-remaining" class="font-semibold">¥60,000</span>
+                                        <span id="shopping-remaining-eur" class="block text-xs text-gray-500 dark:text-gray-400"></span>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2">
+                                    <div id="shopping-progress" class="bg-red-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Presupuesto Section -->
+            <section id="presupuesto" class="content-section space-y-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Gestión de Presupuesto del Viaje</h2>
+                <!-- Gastos ya pagados -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                    <h3 class="font-semibold mb-4 text-green-600 dark:text-green-400 flex items-center"><i data-lucide="check-circle-2" class="w-5 h-5 mr-2"></i>Gastos ya pagados</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="plane" class="w-5 h-5 text-gray-500"></i>
+                            <span>Vuelos:</span>
+                            <span class="font-semibold">€1,200</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="hotel" class="w-5 h-5 text-gray-500"></i>
+                            <span>Hoteles:</span>
+                            <span class="font-semibold">€800</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Presupuesto para gastos -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                     <h3 class="font-semibold mb-4 text-orange-500 flex items-center"><i data-lucide="gem" class="w-5 h-5 mr-2"></i>Presupuesto para gastos del viaje</h3>
+                     <div id="budget-items-container" class="space-y-4">
+                        <!-- Budget items will be injected here -->
+                     </div>
+                     <hr class="my-6 border-gray-200 dark:border-gray-700">
+                     <div class="space-y-3">
+                        <div class="flex justify-between"><span>Total presupuesto viaje:</span> <span class="font-bold text-right">¥230,000<span class="block text-xs text-gray-500 font-normal dark:text-gray-400">(~€1533.33)</span></span></div>
+                        <div class="flex justify-between">
+                            <span>Total gastado:</span> 
+                            <div class="text-right">
+                                <span id="budget-total-spent" class="font-bold text-red-500">¥0</span>
+                                <span id="budget-total-spent-eur" class="block text-xs text-gray-500 font-normal dark:text-gray-400"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Restante:</span>
+                            <div class="text-right">
+                                <span id="budget-total-remaining" class="font-bold text-green-500">¥230,000</span>
+                                <span id="budget-total-remaining-eur" class="block text-xs text-gray-500 font-normal dark:text-gray-400"></span>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+            </section>
+
+            <!-- Utilidades Section -->
+            <section id="utilidades" class="content-section">
+                 <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Utilidades de Viaje</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Currency Converter -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold mb-4">Conversor de Moneda</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="yen-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Yenes (¥)</label>
+                                <input type="number" id="yen-input" value="1000" class="mt-1 block w-full p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                            </div>
+                            <div class="flex justify-center">
+                               <i data-lucide="arrow-right-left" class="w-6 h-6 text-gray-500"></i>
+                            </div>
+                            <div>
+                                <label for="eur-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Euros (€)</label>
+                                <input type="number" id="eur-input" class="mt-1 block w-full p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">1 EUR ≈ 150 JPY (aproximado)</p>
+                    </div>
+                    <!-- Useful Phrases -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                        <h3 class="font-semibold mb-4">Frases Útiles</h3>
+                        <div id="phrases-container" class="space-y-3 max-h-96 overflow-y-auto">
+                           <!-- Phrases will be injected here -->
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- PWA SETUP ---
+            // 1. Create and set manifest
+            const manifest = {
+              "name": "Planificador de Viaje a Japón 2025",
+              "short_name": "Japón 2025",
+              "start_url": ".",
+              "display": "standalone",
+              "background_color": "#f8f9fa",
+              "theme_color": "#ef4444",
+              "description": "Una app para planificar tu viaje a Japón.",
+              "icons": [
+                { "src": "https://placehold.co/192x192/ef4444/ffffff?text=JP", "sizes": "192x192", "type": "image/png" },
+                { "src": "https://placehold.co/512x512/ef4444/ffffff?text=JP", "sizes": "512x512", "type": "image/png" }
+              ]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            document.querySelector('#manifest').setAttribute('href', manifestURL);
+
+            // 2. Register Service Worker
+            if ('serviceWorker' in navigator) {
+                const swContent = `
+                    const CACHE_NAME = 'japan-trip-planner-v2';
+                    const urlsToCache = [
+                        '/',
+                        'https://cdn.tailwindcss.com',
+                        'https://unpkg.com/lucide@latest',
+                        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+                    ];
+
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME).then(cache => {
+                                console.log('Opened cache');
+                                return cache.addAll(urlsToCache);
+                            })
+                        );
+                    });
+
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request).then(response => {
+                                return response || fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+                const swBlob = new Blob([swContent], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register(swUrl)
+                        .then(reg => console.log('Service worker registered.', reg))
+                        .catch(err => console.error('Service worker registration failed:', err));
+                });
+            }
+
+            // --- DATA ---
+            const tripData = {
+                startDate: '2025-09-16',
+                itinerary: [
+                    { date: 'Mar 16', city: 'Tokyo', title: 'Llegada (NRT 17:30)', items: ['Llegada y traslado a Tokio', 'Paseo ligero por la zona del hotel', 'Cena sencilla (ramen o izakaya en Yūrakuchō Gado-shita)'], notes: '' },
+                    { date: 'Mié 17', city: 'Tokyo', title: 'Ginza esencial', items: ['Ginza Itoya (papelería icónica, 12 plantas)', 'MUJI Ginza (flagship con hotel y food hall)', 'UNIQLO Ginza (12F, básicos)'], notes: 'Explorar las grandes tiendas y la arquitectura moderna.' },
+                    { date: 'Jue 18', city: 'Tokyo', title: 'Shibuya y Harajuku', items: ['Cruce de Shibuya', 'Estatua Hachiko', 'Takeshita Street (Harajuku)', 'Santuario Meiji Jingu'], notes: 'Día de contrastes entre la modernidad bulliciosa y la paz espiritual.'},
+                    { date: 'Vie 19', city: 'Tokyo', title: 'Akihabara y Ueno', items: ['Akihabara Electric Town (electrónica, anime, manga)', 'Parque de Ueno', 'Museo Nacional de Tokio o Museo de Naturaleza y Ciencia'], notes: ''},
+                    { date: 'Sáb 20', city: 'Tokyo', title: 'Asakusa y Skytree', items: ['Templo Sensō-ji', 'Calle comercial Nakamise-dori', 'Tokyo Skytree para vistas panorámicas'], notes: 'Combinar lo tradicional con vistas espectaculares.'},
+                    { date: 'Dom 21', city: 'Viaje', title: 'Traslado a Kyoto', items: ['Viaje en Shinkansen (tren bala) de Tokio a Kyoto', 'Check-in en el hotel de Kyoto', 'Paseo por Gion por la tarde/noche'], notes: '¡Disfrutar del viaje en tren bala!'},
+                    { date: 'Lun 22', city: 'Kyoto', title: 'Este de Kyoto', items: ['Kiyomizu-dera Temple', 'Paseo por las calles Sannenzaka y Ninenzaka', 'Santuario Yasaka y Parque Maruyama'], notes: 'Explorar el distrito histórico de Higashiyama.'},
+                    { date: 'Mar 23', city: 'Kyoto', title: 'Norte y Centro de Kyoto', items: ['Pabellón Dorado (Kinkaku-ji)', 'Jardín zen de Ryōan-ji', 'Castillo Nijō', 'Mercado Nishiki'], notes: 'Un día de templos icónicos y delicias locales.'},
+                    { date: 'Mié 24', city: 'Kyoto', title: 'Arashiyama y traslado a Takayama', items: ['Bosque de Bambú de Arashiyama', 'Puente Togetsukyo', 'Viaje en tren a Takayama por la tarde'], notes: 'Mañana en la naturaleza y luego viaje a los Alpes Japoneses.'},
+                    { date: 'Jue 25', city: 'Takayama', title: 'Explorando Takayama', items: ['Casco antiguo (Sanmachi Suji)', 'Mercados matutinos del río Miyagawa', 'Takayama Jinya (antiguo gobierno)', 'Probar sake en una destilería local'], notes: 'Disfrutar del ambiente tradicional y la comida local.'},
+                    { date: 'Vie 26', city: 'Takayama', title: 'Excursión a Shirakawa-go', items: ['Excursión de un día a la aldea de Shirakawa-go (Patrimonio de la Humanidad)', 'Ver las casas de estilo gassho-zukuri', 'Regreso a Takayama por la tarde'], notes: 'Reservar el autobús con antelación.'},
+                    { date: 'Sáb 27', city: 'Viaje', title: 'Traslado a Osaka', items: ['Viaje en tren de Takayama a Osaka', 'Check-in en el hotel', 'Explorar Dōtonbori por la noche (neones, comida callejera)'], notes: '¡Prepararse para la vibrante vida nocturna de Osaka!'},
+                    { date: 'Dom 28', city: 'Osaka', title: 'Centro de Osaka', items: ['Castillo de Osaka', 'Barrio de Shinsekai y Torre Tsūtenkaku', 'Tarde de compras en Shinsaibashi-suji'], notes: ''},
+                    { date: 'Lun 29', city: 'Osaka', title: 'Excursión a Nara y regreso a Tokyo', items: ['Excursión de medio día a Nara (ver los ciervos y el Gran Buda en Tōdai-ji)', 'Viaje en Shinkansen de Osaka a Tokyo por la tarde-noche'], notes: 'Día largo pero gratificante.'},
+                    { date: 'Mar 30', city: 'Tokyo', title: 'Día libre y compras finales', items: ['Día libre para explorar intereses personales (museos, barrios, etc.)', 'Compras de última hora en Shinjuku o Ginza', 'Cena de despedida'], notes: ''},
+                    { date: 'Mié 01', city: 'Tokyo', title: 'Regreso', items: ['Traslado al aeropuerto (NRT o HND) para el vuelo de regreso'], notes: 'Fin del viaje.'},
+                ],
+                cities: [
+                    {
+                        name: 'Tokyo',
+                        dates: '17-20 & 29 sep - 1 oct',
+                        hotel: 'Quintessa Hotel Tokyo Ginza & Hilton Tokyo Shinjuku',
+                        lat: 35.6895,
+                        lon: 139.6917,
+                        timezone: 'Asia/Tokyo',
+                        links: {
+                            transporte: [
+                                { name: 'Estación de Tokyo', url: 'https://maps.app.goo.gl/uGr5a49A8Bf2iL5k6' },
+                                { name: 'Estación de Shinjuku', url: 'https://maps.app.goo.gl/NfL5bM1u6v2hN3f56' },
+                                { name: 'Aeropuerto de Narita (NRT)', url: 'https://maps.app.goo.gl/9xLdYhGg2e8A3wXUA' },
+                            ],
+                            esenciales: [
+                                { name: 'Cruce de Shibuya', url: 'https://maps.app.goo.gl/sUF3j3gL8b8vY7f9A' },
+                                { name: 'Templo Sensō-ji', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                                { name: 'Tokyo Skytree', url: 'https://maps.app.goo.gl/cQp9gE8hLz7m7Y5k9' },
+                                { name: 'Santuario Meiji', url: 'https://maps.app.goo.gl/XQ4f7m7y8z9zC3x4A' },
+                            ],
+                            comercios: [
+                                { name: 'Ginza (distrito de lujo)', url: 'https://maps.app.goo.gl/pZ3f7g8hLz9m7Y6k8' },
+                                { name: 'Akihabara Electric Town', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                                { name: 'Don Quijote (tienda de todo)', url: 'https://maps.app.goo.gl/search/don+quijote' },
+                                { name: 'Uniqlo Ginza', url: 'https://maps.app.goo.gl/e4Ua2b1c3d4e5F6g7' },
+                            ]
+                        }
+                    },
+                    {
+                        name: 'Kyoto',
+                        dates: '22-24 sep',
+                        hotel: 'TSUGU Kyoto Sanjo',
+                        lat: 35.0116,
+                        lon: 135.7681,
+                        timezone: 'Asia/Tokyo',
+                        links: {
+                            transporte: [
+                                { name: 'Estación de Kyoto', url: 'https://maps.app.goo.gl/uGr5a49A8Bf2iL5k6' },
+                            ],
+                            esenciales: [
+                                { name: 'Kinkaku-ji (Pabellón Dorado)', url: 'https://maps.app.goo.gl/sUF3j3gL8b8vY7f9A' },
+                                { name: 'Fushimi Inari-taisha', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                                { name: 'Bosque de Bambú de Arashiyama', url: 'https://maps.app.goo.gl/cQp9gE8hLz7m7Y5k9' },
+                                { name: 'Gion (distrito de geishas)', url: 'https://maps.app.goo.gl/XQ4f7m7y8z9zC3x4A' },
+                            ],
+                            comercios: [
+                                { name: 'Mercado Nishiki', url: 'https://maps.app.goo.gl/pZ3f7g8hLz9m7Y6k8' },
+                                { name: 'Calles Sannenzaka y Ninenzaka', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                            ]
+                        }
+                    },
+                    {
+                        name: 'Takayama',
+                        dates: '24-26 sep',
+                        hotel: 'Ichinomatsu Japanese Modern Hotel',
+                        lat: 36.1461,
+                        lon: 137.2525,
+                        timezone: 'Asia/Tokyo',
+                        links: {
+                            transporte: [
+                                { name: 'Estación de Takayama', url: 'https://maps.app.goo.gl/uGr5a49A8Bf2iL5k6' },
+                            ],
+                            esenciales: [
+                                { name: 'Casco Antiguo (Sanmachi Suji)', url: 'https://maps.app.goo.gl/sUF3j3gL8b8vY7f9A' },
+                                { name: 'Takayama Jinya', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                                { name: 'Aldea Folklórica de Hida', url: 'https://maps.app.goo.gl/cQp9gE8hLz7m7Y5k9' },
+                            ],
+                            comercios: [
+                                { name: 'Mercado Matutino del Río Miyagawa', url: 'https://maps.app.goo.gl/pZ3f7g8hLz9m7Y6k8' },
+                            ]
+                        }
+                    },
+                    {
+                        name: 'Osaka',
+                        dates: '27-29 sep',
+                        hotel: 'Hotel por confirmar',
+                        lat: 34.6937,
+                        lon: 135.5023,
+                        timezone: 'Asia/Tokyo',
+                        links: {
+                            transporte: [
+                                { name: 'Estación de Shin-Osaka (Shinkansen)', url: 'https://maps.app.goo.gl/uGr5a49A8Bf2iL5k6' },
+                                { name: 'Estación de Namba', url: 'https://maps.app.goo.gl/sUF3j3gL8b8vY7f9A' },
+                            ],
+                            esenciales: [
+                                { name: 'Dōtonbori', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                                { name: 'Castillo de Osaka', url: 'https://maps.app.goo.gl/cQp9gE8hLz7m7Y5k9' },
+                                { name: 'Barrio de Shinsekai', url: 'https://maps.app.goo.gl/XQ4f7m7y8z9zC3x4A' },
+                            ],
+                            comercios: [
+                                { name: 'Shinsaibashi-suji (calle comercial)', url: 'https://maps.app.goo.gl/pZ3f7g8hLz9m7Y6k8' },
+                                { name: 'Kuromon Ichiba Market', url: 'https://maps.app.goo.gl/d5vXw6z6z5k5F3x5A' },
+                            ]
+                        }
+                    }
+                ],
+                budget: {
+                    categories: [
+                        { name: 'Comida y bebida', budget: 80000, spent: 0 },
+                        { name: 'Compras y souvenirs', budget: 60000, spent: 0 },
+                        { name: 'Transporte local', budget: 40000, spent: 0 },
+                        { name: 'Actividades y entradas', budget: 30000, spent: 0 },
+                        { name: 'Varios y emergencias', budget: 20000, spent: 0 },
+                    ]
+                },
+                phrases: [
+                    { jp: 'こんにちは (Konnichiwa)', es: 'Hola / Buenas tardes' },
+                    { jp: 'ありがとうございます (Arigatou gozaimasu)', es: 'Muchas gracias' },
+                    { jp: 'すみません (Sumimasen)', es: 'Disculpe / Perdón' },
+                    { jp: 'いくらですか？ (Ikura desu ka?)', es: '¿Cuánto cuesta?' },
+                    { jp: 'これは何ですか？ (Kore wa nan desu ka?)', es: '¿Qué es esto?' },
+                    { jp: '...はどこですか？ (...wa doko desu ka?)', es: '¿Dónde está...?' },
+                    { jp: '...に行きたいです (...ni ikitai desu)', es: 'Quiero ir a...' },
+                    { jp: '英語を話せますか？ (Eigo o hanasemasu ka?)', es: '¿Habla inglés?' },
+                    { jp: '助けてください (Tasukete kudasai)', es: 'Ayúdeme, por favor' },
+                    { jp: '写真を撮ってもらえますか？ (Shashin o totte moraemasu ka?)', es: '¿Puede tomarme una foto?' },
+                    { jp: 'おいしい (Oishii)', es: 'Delicioso' },
+                    { jp: 'お勘定をお願いします (Okanjō o onegai shimasu)', es: 'La cuenta, por favor' },
+                ]
+            };
+
+            const YEN_TO_EUR = 1 / 150;
+            const EUR_TO_YEN = 150;
+
+            // --- ELEMENTS ---
+            const navItems = document.querySelectorAll('.nav-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            const themeToggle = document.getElementById('theme-toggle');
+            const countdownEl = document.getElementById('countdown');
+            const timeEsEl = document.getElementById('time-es');
+            const timeJpEl = document.getElementById('time-jp');
+            const itineraryContainer = document.getElementById('itinerary-container');
+            const citiesContainer = document.getElementById('cities-container');
+            const shoppingForm = document.getElementById('shopping-form');
+            const shoppingListContainer = document.getElementById('shopping-list-container');
+            const shoppingSpentEl = document.getElementById('shopping-spent');
+            const shoppingSpentEurEl = document.getElementById('shopping-spent-eur');
+            const shoppingRemainingEl = document.getElementById('shopping-remaining');
+            const shoppingRemainingEurEl = document.getElementById('shopping-remaining-eur');
+            const shoppingBudgetEurEl = document.getElementById('shopping-budget-eur');
+            const shoppingProgressEl = document.getElementById('shopping-progress');
+            const budgetItemsContainer = document.getElementById('budget-items-container');
+            const budgetTotalSpentEl = document.getElementById('budget-total-spent');
+            const budgetTotalSpentEurEl = document.getElementById('budget-total-spent-eur');
+            const budgetTotalRemainingEl = document.getElementById('budget-total-remaining');
+            const budgetTotalRemainingEurEl = document.getElementById('budget-total-remaining-eur');
+            const yenInput = document.getElementById('yen-input');
+            const eurInput = document.getElementById('eur-input');
+            const phrasesContainer = document.getElementById('phrases-container');
+
+            let shoppingList = [];
+            
+            // --- FUNCTIONS ---
+
+            const yenToEurString = (yen) => `(~€${(yen * YEN_TO_EUR).toFixed(2)})`;
+
+            // Navigation
+            const switchTab = (targetId) => {
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === targetId);
+                });
+                navItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.target === targetId);
+                });
+            };
+
+            // Countdown Timer
+            const updateCountdown = () => {
+                const tripStartDate = new Date(tripData.startDate);
+                const now = new Date();
+                const diffTime = tripStartDate - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                countdownEl.textContent = diffDays > 0 ? `${diffDays} días restantes` : '¡Buen viaje!';
+            };
+
+            // Real-time Clocks
+            const updateClocks = () => {
+                const now = new Date();
+                timeEsEl.textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                timeJpEl.textContent = now.toLocaleTimeString('es-ES', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' });
+            };
+
+            // Render Itinerary
+            const renderItinerary = () => {
+                itineraryContainer.innerHTML = tripData.itinerary.map((day, index) => `
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center cursor-pointer" data-toggle="itinerary-${index}">
+                            <div>
+                                <p class="font-bold text-red-600 dark:text-red-400">${day.date} - ${day.title}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${day.city}</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <input type="checkbox" class="h-5 w-5 rounded text-red-500 focus:ring-red-400">
+                                <i data-lucide="chevron-down" class="w-5 h-5 transition-transform"></i>
+                            </div>
+                        </div>
+                        <div id="itinerary-${index}" class="hidden mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                ${day.items.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                            <div class="mt-4">
+                                <label class="text-sm font-medium">Notas personales del día...</label>
+                                <textarea class="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 text-sm" rows="2">${day.notes}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+            
+            // Fetch Weather and Render Cities
+            const renderCities = async () => {
+                let cityHtml = '';
+                for (const city of tripData.cities) {
+                    // Mock weather data as API might be blocked
+                    const temp = (10 + Math.random() * 15).toFixed(0);
+                    const weatherIcon = 'sun'; // Default icon
+                    const weatherDesc = 'Despejado';
+                    const humidity = (50 + Math.random() * 30).toFixed(0);
+                    const wind = (5 + Math.random() * 10).toFixed(0);
+                    const cityTime = new Date().toLocaleTimeString('es-ES', { timeZone: city.timezone, hour: '2-digit', minute: '2-digit', second: '2-digit'});
+
+                    const generateLinks = (links) => links.map(link => `
+                        <a href="${link.url}" target="_blank" class="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                            <i data-lucide="link-2" class="w-3 h-3 mr-2"></i>${link.name}
+                        </a>`).join('');
+
+                    cityHtml += `
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                            <div class="flex flex-wrap justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">${city.name}</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">${city.dates}</p>
+                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-300 mt-1">${city.hotel}</p>
+                                </div>
+                                <div class="text-right mt-4 sm:mt-0">
+                                    <p class="text-3xl font-bold">${temp}°C</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">${weatherDesc}</p>
+                                    <p class="text-sm font-semibold mt-2">Hora local: ${cityTime}</p>
+                                </div>
+                            </div>
+                            <div class="text-sm p-3 bg-blue-50 dark:bg-gray-700 rounded-lg mb-4">
+                                <p><span class="font-semibold">Ropa recomendada:</span> Chaqueta de invierno, bufanda.</p>
+                                <p><span class="font-semibold">Datos:</span> Humedad: ${humidity}% • Viento: ${wind} km/h</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <h4 class="font-semibold mb-2 flex items-center"><i data-lucide="tram-front" class="w-4 h-4 mr-2"></i>Transporte</h4>
+                                    <div class="space-y-1">${generateLinks(city.links.transporte)}</div>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2 flex items-center"><i data-lucide="camera" class="w-4 h-4 mr-2"></i>Sitios Esenciales</h4>
+                                    <div class="space-y-1">${generateLinks(city.links.esenciales)}</div>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2 flex items-center"><i data-lucide="shopping-bag" class="w-4 h-4 mr-2"></i>Comercios Imprescindibles</h4>
+                                    <div class="space-y-1">${generateLinks(city.links.comercios)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                citiesContainer.innerHTML = cityHtml;
+                lucide.createIcons();
+            };
+
+            // Render Shopping List
+            const renderShoppingList = () => {
+                if (shoppingList.length === 0) {
+                    shoppingListContainer.innerHTML = `
+                        <div class="text-center text-gray-500 dark:text-gray-400 pt-8">
+                            <i data-lucide="shopping-basket" class="w-12 h-12 mx-auto mb-2"></i>
+                            <p>No hay artículos en tu lista de compras</p>
+                        </div>`;
+                } else {
+                    shoppingListContainer.innerHTML = `
+                        <ul class="space-y-3">
+                            ${shoppingList.map((item, index) => `
+                                <li class="flex justify-between items-center p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <div>
+                                        <p class="font-medium">${item.name}</p>
+                                        <p class="text-xs text-gray-500">${item.category}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="text-right">
+                                            <p class="font-semibold">¥${item.price.toLocaleString()}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">${yenToEurString(item.price)}</p>
+                                        </div>
+                                        <button data-index="${index}" class="delete-item-btn text-gray-400 hover:text-red-500">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>`;
+                }
+                updateShoppingSummary();
+                lucide.createIcons();
+            };
+
+            // Update Shopping Summary
+            const updateShoppingSummary = () => {
+                const budget = tripData.budget.categories.find(c => c.name.includes('Compras')).budget;
+                const spent = shoppingList.reduce((sum, item) => sum + item.price, 0);
+                const remaining = budget - spent;
+                const progress = budget > 0 ? (spent / budget) * 100 : 0;
+
+                shoppingSpentEl.textContent = `¥${spent.toLocaleString()}`;
+                shoppingSpentEurEl.textContent = yenToEurString(spent);
+                shoppingRemainingEl.textContent = `¥${remaining.toLocaleString()}`;
+                shoppingRemainingEurEl.textContent = yenToEurString(remaining);
+                shoppingBudgetEurEl.textContent = yenToEurString(budget);
+                shoppingProgressEl.style.width = `${progress}%`;
+            };
+
+            // Render Budget
+            const renderBudget = () => {
+                budgetItemsContainer.innerHTML = tripData.budget.categories.map((cat, index) => `
+                    <div class="grid grid-cols-6 gap-2 items-center">
+                        <span class="col-span-3 sm:col-span-2">${cat.name}</span>
+                        <div class="col-span-3 sm:col-span-2 text-sm text-gray-500 dark:text-gray-400" id="budget-text-${index}">
+                            ¥${cat.spent.toLocaleString()} / ¥${cat.budget.toLocaleString()}
+                            <span class="block text-xs">${yenToEurString(cat.spent)} / ${yenToEurString(cat.budget)}</span>
+                        </div>
+                        <div class="col-span-6 sm:col-span-2 flex justify-end space-x-2">
+                             <input type="number" placeholder="¥" class="w-24 p-1 border rounded text-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600" id="input-${index}">
+                            <button data-index="${index}" data-action="add" class="budget-btn bg-green-500 text-white rounded p-1.5 hover:bg-green-600"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                updateBudgetSummary();
+                lucide.createIcons();
+            };
+
+            // Update Budget Summary
+            const updateBudgetSummary = () => {
+                const totalBudget = tripData.budget.categories.reduce((sum, cat) => sum + cat.budget, 0);
+                const totalSpent = tripData.budget.categories.reduce((sum, cat) => sum + cat.spent, 0);
+                const totalRemaining = totalBudget - totalSpent;
+
+                budgetTotalSpentEl.textContent = `¥${totalSpent.toLocaleString()}`;
+                budgetTotalSpentEurEl.textContent = yenToEurString(totalSpent);
+                budgetTotalRemainingEl.textContent = `¥${totalRemaining.toLocaleString()}`;
+                budgetTotalRemainingEurEl.textContent = yenToEurString(totalRemaining);
+            };
+
+            // Render Phrases
+            const renderPhrases = () => {
+                phrasesContainer.innerHTML = tripData.phrases.map(phrase => `
+                    <div class="p-3 rounded-lg bg-pink-50 dark:bg-gray-700">
+                        <p class="font-medium text-pink-800 dark:text-pink-200">${phrase.jp}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">${phrase.es}</p>
+                    </div>
+                `).join('');
+            };
+
+            // Currency Converter Logic
+            const convertCurrency = (source) => {
+                if (source === 'yen') {
+                    const yen = parseFloat(yenInput.value);
+                    eurInput.value = isNaN(yen) ? '' : (yen * YEN_TO_EUR).toFixed(2);
+                } else {
+                    const eur = parseFloat(eurInput.value);
+                    yenInput.value = isNaN(eur) ? '' : (eur * EUR_TO_YEN).toFixed(0);
+                }
+            };
+            
+            // --- EVENT LISTENERS ---
+            
+            // Navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', () => switchTab(item.dataset.target));
+            });
+
+            // Theme Toggle
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+
+            // Itinerary Toggles
+            itineraryContainer.addEventListener('click', (e) => {
+                const header = e.target.closest('[data-toggle]');
+                if (header) {
+                    const contentId = header.dataset.toggle;
+                    const content = document.getElementById(contentId);
+                    const icon = header.querySelector('i[data-lucide]');
+                    content.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                }
+            });
+
+            // Shopping Form
+            shoppingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('item-name').value;
+                const category = document.getElementById('item-category').value;
+                const price = parseFloat(document.getElementById('item-price').value);
+                if (name && !isNaN(price)) {
+                    shoppingList.push({ name, category, price });
+                    renderShoppingList();
+                    shoppingForm.reset();
+                }
+            });
+
+            // Delete Shopping Item
+            shoppingListContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('.delete-item-btn');
+                if (button) {
+                    const index = parseInt(button.dataset.index);
+                    shoppingList.splice(index, 1);
+                    renderShoppingList();
+                }
+            });
+
+            // Budget Buttons
+            budgetItemsContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('.budget-btn');
+                if (button) {
+                    const index = parseInt(button.dataset.index);
+                    const action = button.dataset.action;
+                    const input = document.getElementById(`input-${index}`);
+                    const amount = parseFloat(input.value);
+
+                    if (!isNaN(amount) && amount > 0) {
+                        const category = tripData.budget.categories[index];
+                        if (action === 'add') {
+                            category.spent += amount;
+                        }
+                        const budgetTextEl = document.getElementById(`budget-text-${index}`);
+                        budgetTextEl.innerHTML = `
+                            ¥${category.spent.toLocaleString()} / ¥${category.budget.toLocaleString()}
+                            <span class="block text-xs">${yenToEurString(category.spent)} / ${yenToEurString(category.budget)}</span>`;
+                        input.value = '';
+                        updateBudgetSummary();
+                    }
+                }
+            });
+
+            // Currency Converter
+            yenInput.addEventListener('input', () => convertCurrency('yen'));
+            eurInput.addEventListener('input', () => convertCurrency('eur'));
+
+            // --- INITIALIZATION ---
+            lucide.createIcons();
+            switchTab('itinerario');
+            updateCountdown();
+            updateClocks();
+            setInterval(updateClocks, 1000); // Update clocks every second
+            
+            renderItinerary();
+            renderCities();
+            renderShoppingList();
+            renderBudget();
+            renderPhrases();
+            convertCurrency('yen');
+        });
+    </script>
+</body>
+</html>
